@@ -1,7 +1,6 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
-
 require('dotenv').config();
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5000;
@@ -59,6 +58,21 @@ async function run() {
                 next();
             });
         }
+
+        // Users Collection API
+
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            const query = { email: user.email };
+            const existingUser = await users.findOne(query);
+            if (existingUser) {
+                res.send({ message: 'User already exists', insertedId: existingUser._id });
+                return;
+            }
+            const result = await users.insertOne(user);
+            res.json(result);
+        });
+
 
 
 
