@@ -3,8 +3,9 @@ import { io } from "../server.js";  // Import the io instance
 
 export const createTask = async (req, res) => {
     try {
-        const { title, description, category } = req.body;
-        const newTask = new Task({ title, description, category, userId: req.user.id });
+        console.log(req.body);
+        const { title, description, category, userId } = req.body;
+        const newTask = new Task({ title, description, category, userId: userId });
         await newTask.save();
 
         io.emit("taskUpdated", { action: "create", task: newTask });  // Emit event
