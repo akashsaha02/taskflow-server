@@ -18,7 +18,8 @@ export const createTask = async (req, res) => {
 
 export const getTasks = async (req, res) => {
     try {
-        const tasks = await Task.find({ userId: req.user.id });
+        const email = req.params.email;
+        const tasks = await Task.find({ userId: email });
         res.json(tasks);
     } catch (error) {
         res.status(500).json({ error: error.message });
