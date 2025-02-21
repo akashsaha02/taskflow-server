@@ -28,15 +28,30 @@ export const getTasks = async (req, res) => {
 
 export const updateTask = async (req, res) => {
     try {
-        const updatedTask = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const { id } = req.params;
+        const existingTask = await Task.findById(id);
 
-        io.emit("taskUpdated", { action: "update", task: updatedTask });  // Emit event
+        if (!existingTask) {
+            return res.status(404).json({ error: "Task not found" });
+        }
+
+        // Only update if there's a change in category or other fields
+        if (existingTask.category === req.body.category) {
+            return res.json(existingTask);
+        }
+
+        const updatedTask = await Task.findByIdAndUpdate(id, req.body, { new: true });
+
+        if (updatedTask) {
+            io.emit("taskUpdated", { action: "update", task: updatedTask }); // Emit real-time update
+        }
 
         res.json(updatedTask);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
+
 
 export const deleteTask = async (req, res) => {
     try {
