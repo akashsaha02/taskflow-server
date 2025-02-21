@@ -101,6 +101,7 @@ import { Server } from "socket.io";
 import connectDB from "./config/db.js";
 import userRoutes from "./routes/userRoutes.js";
 import taskRoutes from "./routes/taskRoutes.js";
+import authRoutes from "./routes/authRoutes.js"
 
 dotenv.config();
 const app = express();
@@ -116,9 +117,12 @@ const io = new Server(server, {
 app.use(cors());
 app.use(express.json());
 
+
+
 // Routes
 app.use("/users", userRoutes);
 app.use("/tasks", taskRoutes);
+app.use("/auth", authRoutes);
 
 // Socket.io Connection
 io.on("connection", (socket) => {

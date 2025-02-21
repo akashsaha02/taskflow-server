@@ -1,16 +1,16 @@
 import jwt from "jsonwebtoken";
 
 export const verifyToken = (req, res, next) => {
-    const token = req.headers.authorization?.split(" ")[1];
-    if (!token) {
-        return res.status(401).json({ message: "Unauthorized" });
+    if (!req.headers.authorization) {
+        return res.status(401).send({ message: 'Unauthorized request' });
     }
 
+    const token = req.headers.authorization.split(' ')[1];
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
         if (err) {
-            return res.status(403).json({ message: "Forbidden" });
+            return res.status(403).send({ message: 'Forbidden request' });
         }
-        req.user = decoded;
+        req.decoded = decoded;
         next();
     });
 };

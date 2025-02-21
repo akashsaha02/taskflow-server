@@ -34,3 +34,25 @@ export const loginUser = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+export const setUser = async (req, res) => {
+    try {
+        const { email, name, photo } = req.body;
+
+        // Check if user already exists
+        let existingUser = await User.findOne({ email });
+
+        if (existingUser) {
+            return res.status(200).json({ message: "User already exists", insertedId: existingUser._id });
+        }
+
+        // Create new user
+        const newUser = new User({ email, name, photo });
+        const savedUser = await newUser.save();
+
+        res.status(201).json({ message: "User created successfully", insertedId: savedUser._id });
+    } catch (error) {
+        console.error("Error in setUser:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+};
